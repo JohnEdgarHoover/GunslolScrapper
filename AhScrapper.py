@@ -14,8 +14,7 @@ init(autoreset=True)
 
 ascii_art = f"""
                 ==============================================================                                                                                              
-                            {Fore.YELLOW}  -> ({Fore.CYAN}https://guns.lol/j_hoover{Fore.YELLOW})))) <-                
-                            {Fore.YELLOW}  -> ({Fore.CYAN}https://guns.lol/asterfion{Fore.YELLOW}))) <-           
+                            {Fore.YELLOW}  -> ({Fore.CYAN}https://guns.lol/jeh{Fore.YELLOW})))) <-                         
                             {Fore.YELLOW}  -> ({Fore.CYAN}Made by Asterfion and Hades{Fore.YELLOW})) <-                  
                             {Fore.YELLOW}  -> ({Fore.CYAN}Guns.lol | Scrapper | Goated{Fore.YELLOW}) <- 
             
@@ -192,7 +191,7 @@ def main():
         log_file_name = os.path.join(folder_name, "AH-Scraping_log-AH.txt")
         
         with open(log_file_name, 'w') as log_file:
-            log_file.write(f"-> Made by Asterfion and Hades - https://guns.lol/asterfion - https://guns.lol/j_hoover \n-> Scraping started for {url} on {datetime.now()}\n\n")
+            log_file.write(f"-> Made by Asterfion and Hades - https://guns.lol/j_hoover \n-> Scraping started for {url} on {datetime.now()}\n\n")
 
         driver = initialize_driver()
         login_if_needed(driver) 
