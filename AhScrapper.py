@@ -1,3 +1,4 @@
+# Simple GunsLolScrapper made by Hades and Origan
 import os
 import requests
 import re
@@ -10,64 +11,40 @@ from webdriver_manager.chrome import ChromeDriverManager
 from colorama import Fore, init
 import time
 
+
 init(autoreset=True)
 
-ascii_art = f"""
-                ==============================================================                                                                                              
-                            {Fore.YELLOW}  -> ({Fore.CYAN}https://guns.lol/jeh{Fore.YELLOW})))) <-                         
-                            {Fore.YELLOW}  -> ({Fore.CYAN}Made by Asterfion and Hades{Fore.YELLOW})) <-                  
-                            {Fore.YELLOW}  -> ({Fore.CYAN}Guns.lol | Scrapper | Goated{Fore.YELLOW}) <- 
-            
-                ==============================================================                                          
-{Fore.CYAN}                           
-                                                                       
-
-
- ▄▄▄       ██░ ██      ██████  ▄████▄   ██▀███   ▄▄▄       ██▓███   ██▓███  ▓█████  ██▀███  
-▒████▄    ▓██░ ██▒   ▒██    ▒ ▒██▀ ▀█  ▓██ ▒ ██▒▒████▄    ▓██░  ██▒▓██░  ██▒▓█   ▀ ▓██ ▒ ██▒
-▒██  ▀█▄  ▒██▀▀██░   ░ ▓██▄   ▒▓█    ▄ ▓██ ░▄█ ▒▒██  ▀█▄  ▓██░ ██▓▒▓██░ ██▓▒▒███   ▓██ ░▄█ ▒
-░██▄▄▄▄██ ░▓█ ░██      ▒   ██▒▒▓▓▄ ▄██▒▒██▀▀█▄  ░██▄▄▄▄██ ▒██▄█▓▒ ▒▒██▄█▓▒ ▒▒▓█  ▄ ▒██▀▀█▄  
- ▓█   ▓██▒░▓█▒░██▓   ▒██████▒▒▒ ▓███▀ ░░██▓ ▒██▒ ▓█   ▓██▒▒██▒ ░  ░▒██▒ ░  ░░▒████▒░██▓ ▒██▒
- ▒▒   ▓▒█░ ▒ ░░▒░▒   ▒ ▒▓▒ ▒ ░░ ░▒ ▒  ░░ ▒▓ ░▒▓░ ▒▒   ▓▒█░▒▓▒░ ░  ░▒▓▒░ ░  ░░░ ▒░ ░░ ▒▓ ░▒▓░
-  ▒   ▒▒ ░ ▒ ░▒░ ░   ░ ░▒  ░ ░  ░  ▒     ░▒ ░ ▒░  ▒   ▒▒ ░░▒ ░     ░▒ ░      ░ ░  ░  ░▒ ░ ▒░
-  ░   ▒    ░  ░░ ░   ░  ░  ░  ░          ░░   ░   ░   ▒   ░░       ░░          ░     ░░   ░ 
-      ░  ░ ░  ░  ░         ░  ░ ░         ░           ░  ░                     ░  ░   ░     
-                              ░                                                             
-
-                             
-"""
-
+ascii_art = f"""..."""
 print(Fore.YELLOW + ascii_art)
 
 def sanitize_filename(filename):
     sanitized_name = re.sub(r'[<>:"/\\|?*]', '_', filename)
-    
-    max_filename_length = 200  
+    max_filename_length = 200
     if len(sanitized_name) > max_filename_length:
-        sanitized_name = sanitized_name[:max_filename_length] 
-    
+        sanitized_name = sanitized_name[:max_filename_length]
     return sanitized_name
-
+  
 def update_file_name(media_info, file_url):
-    gun_name = media_info['page_title'].replace(" ", "_")  
-    sanitized_gun_name = sanitize_filename(gun_name) 
-    
+    gun_name = media_info['page_title'].replace(" ", "_")
+    sanitized_gun_name = sanitize_filename(gun_name)
     file_name = file_url.split("/")[-1]
     sanitized_name = sanitize_filename(file_name)
-    
     new_file_name = f"{sanitized_gun_name}__AH-GUNS.LOL-SCRAPPER__{sanitized_name}"
     return new_file_name
 
+# Demande l'URL du gunslol à l'utilisateur
 def get_url():
     url = input(Fore.YELLOW + f"-> Enter the URL:{Fore.WHITE} ")
     return url
 
+# Crée un dossier pour stocker les fichiers téléchargés
 def create_folder(url):
     folder_name = url.split("/")[-1]
     if not os.path.exists(folder_name):
         os.makedirs(folder_name)
     return folder_name
 
+# Configure et lance un navigateur Chrome
 def initialize_driver():
     chrome_options = Options()
     chrome_options.add_argument("--headless")
@@ -75,23 +52,23 @@ def initialize_driver():
     chrome_options.add_argument("--disable-extensions")
     chrome_options.add_argument("--disable-gpu")
     chrome_options.add_argument("--no-sandbox")
-    driver = webdriver.Chrome(service=Service(ChromeDriverManager().install()), options=chrome_options)
+    driver = webdriver.Chrome(service=Service(ChromeDriverManager().install()),
+                              options=chrome_options)
     return driver
 
+# Télécharge un fichier
 def download_file(url, file_name, log_file_name):
-    if len(file_name) > 240: 
-        file_name = file_name[:240]  
+    if len(file_name) > 240:
+        file_name = file_name[:240]
     folder = os.path.dirname(file_name)
-    
     if not os.path.exists(folder):
         os.makedirs(folder)
-    
+
     try:
         response = requests.get(url, stream=True)
         response.raise_for_status()
-        
         total_size = int(response.headers.get('content-length', 0))
-        
+
         with open(file_name, 'wb') as f:
             if total_size == 0:
                 f.write(response.content)
@@ -101,15 +78,16 @@ def download_file(url, file_name, log_file_name):
                     downloaded += len(data)
                     f.write(data)
                     percent = (downloaded / total_size) * 100
-                    print(Fore.GREEN + f"\r-> Downloading: {file_name} [{percent:.2f}%]", end="")
+                    print(Fore.GREEN +
+                          f"\r-> Downloading: {file_name} [{percent:.2f}%]",
+                          end="")
                 print()
-    
     except requests.exceptions.RequestException as e:
         print(Fore.RED + f"\n-> Error downloading {file_name}: {e}")
         with open(log_file_name, 'a') as log_file:
             log_file.write(f"-> Error downloading {file_name}: {e}\n")
 
-
+# Sauvegarde les infos récupérées sur les médias dans un fichier log
 def log_media_info(media_info, log_file_name):
     with open(log_file_name, 'a') as log_file:
         if media_info['videos']:
@@ -128,6 +106,7 @@ def log_media_info(media_info, log_file_name):
             log_file.write(f"\n-> Custom cursor found: {media_info['cursor']}\n")
         log_file.write(f"-> Metadata: {media_info['metadata']}\n")
 
+# Récupère tous les médias (images, vidéos, sons, curseur, métadonnées) sur la page
 def scrape_media(driver, url):
     driver.get(url)
     driver.implicitly_wait(10)
@@ -141,20 +120,24 @@ def scrape_media(driver, url):
         'metadata': {}
     }
 
+    # Extraction des images
     images = driver.find_elements(By.TAG_NAME, 'img')
     for image in images:
         img_src = image.get_attribute('src')
         if img_src:
             media_info['images'].append(img_src)
 
+    # Extraction des vidéos
     videos = driver.find_elements(By.TAG_NAME, 'video')
     for video in videos:
         media_info['videos'].append(video.get_attribute('src'))
 
+    # Extraction des audios
     audios = driver.find_elements(By.TAG_NAME, 'audio')
     for audio in audios:
         media_info['audios'].append(audio.get_attribute('src'))
 
+    # Recherche d'un curseur personnalisé dans les styles CSS
     style_elements = driver.find_elements(By.TAG_NAME, "style")
     for style in style_elements:
         style_content = style.get_attribute("innerHTML")
@@ -165,6 +148,7 @@ def scrape_media(driver, url):
             media_info['cursor'] = cursor_url
             break
 
+    # Récupération des métadonnées (description, titre, etc.)
     meta_tags = driver.find_elements(By.TAG_NAME, 'meta')
     for meta in meta_tags:
         meta_name = meta.get_attribute('name')
@@ -174,9 +158,11 @@ def scrape_media(driver, url):
 
     return media_info
 
+# Gère le cas où une page nécessite une connexion avant l'accès
 def login_if_needed(driver):
     try:
-        login_button = driver.find_element(By.XPATH, "//button[contains(text(), 'Login')]")
+        login_button = driver.find_element(
+            By.XPATH, "//button[contains(text(), 'Login')]")
         if login_button:
             print(Fore.YELLOW + "-> Login required, proceeding with login...")
             login_button.click()
@@ -184,43 +170,55 @@ def login_if_needed(driver):
     except Exception as e:
         print(Fore.GREEN + "-> No login required, proceeding with scraping...")
 
+# Fonction principale de l'outil
 def main():
     while True:
         url = get_url()
         folder_name = create_folder(url)
         log_file_name = os.path.join(folder_name, "AH-Scraping_log-AH.txt")
-        
+
         with open(log_file_name, 'w') as log_file:
-            log_file.write(f"-> Made by Asterfion and Hades - https://guns.lol/j_hoover \n-> Scraping started for {url} on {datetime.now()}\n\n")
+            log_file.write(
+                f"-> Made by Asterfion and Hades - https://guns.lol/j_hoover \n-> Scraping started for {url} on {datetime.now()}\n\n"
+            )
 
         driver = initialize_driver()
-        login_if_needed(driver) 
+        login_if_needed(driver)
         media_info = scrape_media(driver, url)
 
         log_media_info(media_info, log_file_name)
 
+        # Téléchargement des vidéos
         for video in media_info['videos']:
-            video_name = os.path.join(folder_name, update_file_name(media_info, video))
+            video_name = os.path.join(folder_name,
+                                      update_file_name(media_info, video))
             print(Fore.CYAN + f"\n-> Downloading video: {video}")
             download_file(video, video_name, log_file_name)
 
+        # Téléchargement des audios
         for audio in media_info['audios']:
-            audio_name = os.path.join(folder_name, update_file_name(media_info, audio))
+            audio_name = os.path.join(folder_name,
+                                      update_file_name(media_info, audio))
             print(Fore.CYAN + f"\n-> Downloading audio: {audio}")
             download_file(audio, audio_name, log_file_name)
 
+        # Téléchargement des images
         for image in media_info['images']:
-            image_name = os.path.join(folder_name, update_file_name(media_info, image))
+            image_name = os.path.join(folder_name,
+                                      update_file_name(media_info, image))
             print(Fore.CYAN + f"\n-> Downloading image: {image}")
             download_file(image, image_name, log_file_name)
 
+        # Téléchargement du curseur
         if media_info['cursor']:
             cursor_name = os.path.join(folder_name, "AHSCRAPPER-Cursor.cur")
             print(Fore.CYAN + f"\n-> Downloading cursor: {media_info['cursor']}")
             download_file(media_info['cursor'], cursor_name, log_file_name)
 
+        # Fin du log
         with open(log_file_name, 'a') as log_file:
-            log_file.write(f"\n-> Download completed for {url} on {datetime.now()}\n")
+            log_file.write(
+                f"\n-> Download completed for {url} on {datetime.now()}\n")
             log_file.write("-> Files downloaded successfully:\n")
             log_file.write(f"-> Videos: {len(media_info['videos'])}\n")
             log_file.write(f"-> Audios: {len(media_info['audios'])}\n")
@@ -229,10 +227,13 @@ def main():
                 log_file.write(f"-> Custom Cursor: {media_info['cursor']}\n")
             log_file.write("\n")
 
-        driver.quit()  
+        # Ferme proprement le navigateur
+        driver.quit()
         print(Fore.GREEN + "\n-> Scraping and downloading completed successfully!")
 
-        restart = input(Fore.YELLOW + f"\n-> Do you want to scrape another URL? (y/n):{Fore.WHITE} ")
+        # Demande à l'utilisateur s’il souhaite recommencer
+        restart = input(
+            Fore.YELLOW + f"\n-> Do you want to scrape another URL? (y/n):{Fore.WHITE} ")
         if restart.lower() != 'y':
             print(Fore.GREEN + "\n-> Exiting the program...")
             break
