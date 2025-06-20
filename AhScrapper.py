@@ -11,11 +11,11 @@ from webdriver_manager.chrome import ChromeDriverManager
 from colorama import Fore, init
 import time
 
-
 init(autoreset=True)
 
 ascii_art = f"""..."""
 print(Fore.YELLOW + ascii_art)
+
 
 def sanitize_filename(filename):
     sanitized_name = re.sub(r'[<>:"/\\|?*]', '_', filename)
@@ -23,7 +23,8 @@ def sanitize_filename(filename):
     if len(sanitized_name) > max_filename_length:
         sanitized_name = sanitized_name[:max_filename_length]
     return sanitized_name
-  
+
+
 def update_file_name(media_info, file_url):
     gun_name = media_info['page_title'].replace(" ", "_")
     sanitized_gun_name = sanitize_filename(gun_name)
@@ -32,10 +33,12 @@ def update_file_name(media_info, file_url):
     new_file_name = f"{sanitized_gun_name}__AH-GUNS.LOL-SCRAPPER__{sanitized_name}"
     return new_file_name
 
+
 # Demande l'URL du gunslol à l'utilisateur
 def get_url():
     url = input(Fore.YELLOW + f"-> Enter the URL:{Fore.WHITE} ")
     return url
+
 
 # Crée un dossier pour stocker les fichiers téléchargés
 def create_folder(url):
@@ -43,6 +46,7 @@ def create_folder(url):
     if not os.path.exists(folder_name):
         os.makedirs(folder_name)
     return folder_name
+
 
 # Configure et lance un navigateur Chrome
 def initialize_driver():
@@ -55,6 +59,7 @@ def initialize_driver():
     driver = webdriver.Chrome(service=Service(ChromeDriverManager().install()),
                               options=chrome_options)
     return driver
+
 
 # Télécharge un fichier
 def download_file(url, file_name, log_file_name):
@@ -87,6 +92,7 @@ def download_file(url, file_name, log_file_name):
         with open(log_file_name, 'a') as log_file:
             log_file.write(f"-> Error downloading {file_name}: {e}\n")
 
+
 # Sauvegarde les infos récupérées sur les médias dans un fichier log
 def log_media_info(media_info, log_file_name):
     with open(log_file_name, 'a') as log_file:
@@ -103,8 +109,10 @@ def log_media_info(media_info, log_file_name):
             for image in media_info['images']:
                 log_file.write(f"  - {image}\n")
         if media_info['cursor']:
-            log_file.write(f"\n-> Custom cursor found: {media_info['cursor']}\n")
+            log_file.write(
+                f"\n-> Custom cursor found: {media_info['cursor']}\n")
         log_file.write(f"-> Metadata: {media_info['metadata']}\n")
+
 
 # Récupère tous les médias (images, vidéos, sons, curseur, métadonnées) sur la page
 def scrape_media(driver, url):
@@ -158,6 +166,7 @@ def scrape_media(driver, url):
 
     return media_info
 
+
 # Gère le cas où une page nécessite une connexion avant l'accès
 def login_if_needed(driver):
     try:
@@ -166,9 +175,10 @@ def login_if_needed(driver):
         if login_button:
             print(Fore.YELLOW + "-> Login required, proceeding with login...")
             login_button.click()
-            time.sleep(5)  
+            time.sleep(5)
     except Exception as e:
         print(Fore.GREEN + "-> No login required, proceeding with scraping...")
+
 
 # Fonction principale de l'outil
 def main():
@@ -212,7 +222,8 @@ def main():
         # Téléchargement du curseur
         if media_info['cursor']:
             cursor_name = os.path.join(folder_name, "AHSCRAPPER-Cursor.cur")
-            print(Fore.CYAN + f"\n-> Downloading cursor: {media_info['cursor']}")
+            print(Fore.CYAN +
+                  f"\n-> Downloading cursor: {media_info['cursor']}")
             download_file(media_info['cursor'], cursor_name, log_file_name)
 
         # Fin du log
@@ -229,14 +240,17 @@ def main():
 
         # Ferme proprement le navigateur
         driver.quit()
-        print(Fore.GREEN + "\n-> Scraping and downloading completed successfully!")
+        print(Fore.GREEN +
+              "\n-> Scraping and downloading completed successfully!")
 
         # Demande à l'utilisateur s’il souhaite recommencer
         restart = input(
-            Fore.YELLOW + f"\n-> Do you want to scrape another URL? (y/n):{Fore.WHITE} ")
+            Fore.YELLOW +
+            f"\n-> Do you want to scrape another URL? (y/n):{Fore.WHITE} ")
         if restart.lower() != 'y':
             print(Fore.GREEN + "\n-> Exiting the program...")
             break
+
 
 if __name__ == "__main__":
     main()
